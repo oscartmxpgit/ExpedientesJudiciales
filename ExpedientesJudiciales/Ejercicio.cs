@@ -14,46 +14,46 @@ namespace TracasaInstrumental
 
         public int ObtenerResultado(string rutaFicheroCSV)
         {
-            string[] lines = _ficheroCSVService.ObtenerContenidoCSV(rutaFicheroCSV);
+            string[] lineas = _ficheroCSVService.ObtenerContenidoCSV(rutaFicheroCSV);
 
             int totalDays = 0;
 
-            foreach (string line in lines)
+            foreach (string linea in lineas)
             {
                 string? fechaInoacion = string.Empty;
                 
                 //comprobar que haya 3 columnas, separadas por comas
-                if (line.Count(l => l == ',')==2)
+                if (linea.Count(l => l == ',')==2)
                 {
-                    fechaInoacion = line.Split(',').Skip(1).FirstOrDefault();
-                    string? codigoTramitacion = line.Split(',').Skip(2).FirstOrDefault();
+                    fechaInoacion = linea.Split(',').Skip(1).FirstOrDefault();
+                    string? codigoTramitacion = linea.Split(',').Skip(2).FirstOrDefault();
 
                     if (codigoTramitacion == "DIP" || codigoTramitacion == "SUM")
                     {
                         if (!string.IsNullOrEmpty(fechaInoacion))
-                         totalDays += DaysFromToday(fechaInoacion);
+                         totalDays += DiasTranscurridos(fechaInoacion);
                     }
                 }
             }
             return totalDays;
         }
 
-        static int DaysFromToday(string fecha)
+        static int DiasTranscurridos(string fechaStr)
         {
-            DateTime dateResult;
+            DateTime fecha;
 
             //comprobar el formato de la fecha
-            if (!DateTime.TryParseExact(fecha, "yyyyMMdd", null, DateTimeStyles.None, out dateResult))
+            if (!DateTime.TryParseExact(fechaStr, "yyyyMMdd", null, DateTimeStyles.None, out fecha))
             {
                 return 0;
             }
 
-            DateTime today = DateTime.Now;
+            DateTime hoy = DateTime.Now;
             
-            int days = 0;
-            days = (today - dateResult).Days;
-            if (days > 360)
-                return days;
+            int diasTranscurridos = 0;
+            diasTranscurridos = (hoy - fecha).Days;
+            if (diasTranscurridos > 360)
+                return diasTranscurridos;
             else
                 return 0;
         }
