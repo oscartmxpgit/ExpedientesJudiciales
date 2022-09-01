@@ -14,13 +14,9 @@ namespace TracasaInstrumental
         static void Main(string[] args)
         {
             FicheroCSVService csvService = new FicheroCSVService();
-            // 
-            
             Ejercicio ejercicio = new Ejercicio(csvService);
             int resultado = ejercicio.ObtenerResultado(@".\data.csv");
             Console.WriteLine("La suma de los días de tramitación de todos los expedientes judiciales que cumplen los requisitos es: " + resultado);
         }
-
-        
     }
 }

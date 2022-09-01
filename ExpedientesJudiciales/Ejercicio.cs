@@ -21,7 +21,9 @@ namespace TracasaInstrumental
             foreach (string line in lines)
             {
                 string fechaInoacion = string.Empty;
-                if (!string.IsNullOrWhiteSpace(line))
+                
+                //comprobar que haya 3 columnas, separadas por comas
+                if (line.Count(l => l == ',')==2)
                 {
                     fechaInoacion = line.Split(',').Skip(1).FirstOrDefault();
                     string codigoTramitacion = line.Split(',').Skip(2).FirstOrDefault();
@@ -39,8 +41,7 @@ namespace TracasaInstrumental
         {
             DateTime dt = DateTime.ParseExact(fecha, "yyyyMMdd", CultureInfo.InvariantCulture);
             DateTime today = DateTime.Now;
-            //DateTime today = new DateTime(2021, 12, 12);
-
+            
             int days = 0;
             days = (today - dt).Days;
             if (days > 360)
