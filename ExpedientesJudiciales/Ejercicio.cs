@@ -20,42 +20,45 @@ namespace TracasaInstrumental
 
             foreach (string linea in lineas)
             {
-                string? fechaInoacion = string.Empty;
-                
-                //comprobar que haya 3 columnas, separadas por comas
-                if (linea.Count(l => l == ',')==2)
-                {
-                    fechaInoacion = linea.Split(',').Skip(1).FirstOrDefault();
-                    string? codigoTramitacion = linea.Split(',').Skip(2).FirstOrDefault();
-
-                    if (codigoTramitacion == "DIP" || codigoTramitacion == "SUM")
+                string? fechaIncoacion = linea.Split(',').Skip(1).FirstOrDefault();
+                string? codigoTramitacion = linea.Split(',').Skip(2).FirstOrDefault();
+                if (!string.IsNullOrEmpty(codigoTramitacion))
+                { 
+                    if ((new[] { "DIP", "SUM" }).Contains(codigoTramitacion))
                     {
-                        if (!string.IsNullOrEmpty(fechaInoacion))
-                         totalDays += DiasTranscurridos(fechaInoacion);
+                        if (!string.IsNullOrEmpty(fechaIncoacion))
+                        {
+                            try
+                            {
+                                int diasTranscurridos = DiasTranscurridos(fechaIncoacion);
+                                if (diasTranscurridos > 360)
+                                {
+                                    totalDays += diasTranscurridos;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                // Esta excepción deberíamos registrarla en un log
+                            }                           
+                        }
                     }
                 }
             }
+
             return totalDays;
         }
 
-        static int DiasTranscurridos(string fechaStr)
+        public static int DiasTranscurridos(string fechaStr)
         {
             DateTime fecha;
-
             //comprobar el formato de la fecha
             if (!DateTime.TryParseExact(fechaStr, "yyyyMMdd", null, DateTimeStyles.None, out fecha))
             {
-                return 0;
+                throw new Exception("Fecha no válida");
             }
-
             DateTime hoy = DateTime.Now;
-            
-            int diasTranscurridos = 0;
-            diasTranscurridos = (hoy - fecha).Days;
-            if (diasTranscurridos > 360)
-                return diasTranscurridos;
-            else
-                return 0;
+
+            return (hoy - fecha).Days;        
         }
     }
 
