@@ -20,17 +20,18 @@ namespace TracasaInstrumental
 
             foreach (string line in lines)
             {
-                string fechaInoacion = string.Empty;
+                string? fechaInoacion = string.Empty;
                 
                 //comprobar que haya 3 columnas, separadas por comas
                 if (line.Count(l => l == ',')==2)
                 {
                     fechaInoacion = line.Split(',').Skip(1).FirstOrDefault();
-                    string codigoTramitacion = line.Split(',').Skip(2).FirstOrDefault();
+                    string? codigoTramitacion = line.Split(',').Skip(2).FirstOrDefault();
 
                     if (codigoTramitacion == "DIP" || codigoTramitacion == "SUM")
                     {
-                        totalDays += DaysFromToday(fechaInoacion);
+                        if (!string.IsNullOrEmpty(fechaInoacion))
+                         totalDays += DaysFromToday(fechaInoacion);
                     }
                 }
             }
@@ -39,11 +40,18 @@ namespace TracasaInstrumental
 
         static int DaysFromToday(string fecha)
         {
-            DateTime dt = DateTime.ParseExact(fecha, "yyyyMMdd", CultureInfo.InvariantCulture);
+            DateTime dateResult;
+
+            //comprobar el formato de la fecha
+            if (!DateTime.TryParseExact(fecha, "yyyyMMdd", null, DateTimeStyles.None, out dateResult))
+            {
+                return 0;
+            }
+
             DateTime today = DateTime.Now;
             
             int days = 0;
-            days = (today - dt).Days;
+            days = (today - dateResult).Days;
             if (days > 360)
                 return days;
             else
