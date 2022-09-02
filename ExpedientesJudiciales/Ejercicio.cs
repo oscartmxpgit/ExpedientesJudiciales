@@ -1,4 +1,5 @@
 ﻿using ExpedientesJudiciales;
+using Microsoft.Extensions.Logging;
 using System.Globalization;
 
 namespace TracasaInstrumental
@@ -36,9 +37,9 @@ namespace TracasaInstrumental
                                     totalDays += diasTranscurridos;
                                 }
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                // Esta excepción deberíamos registrarla en un log
+                                LogMessage(e.Message);
                             }                           
                         }
                     }
@@ -59,6 +60,20 @@ namespace TracasaInstrumental
             DateTime hoy = DateTime.Now;
 
             return (hoy - fecha).Days;        
+        }
+
+        public static void LogMessage(string mensaje)
+        {
+            using var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                    .AddFilter("Microsoft", LogLevel.Warning)
+                    .AddFilter("System", LogLevel.Warning)
+                    .AddFilter("LoggingConsoleApp.Program", LogLevel.Debug)
+                    .AddConsole();
+            });
+            ILogger logger = loggerFactory.CreateLogger<Program>();
+            logger.LogInformation(mensaje);
         }
     }
 
